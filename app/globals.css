@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5f7fa;
+  --foreground: #2d3748;
+  --teal-primary: #5fb9a8;
+  --teal-light: #7dd3c0;
+  --teal-dark: #4a9d8e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sarabun), var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: linear-gradient(135deg, #7dd3c0 0%, #5fb9a8 100%);
+  color: var(--foreground);
+  font-family: 'Sarabun', Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
