@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Filter, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { Plus, Filter, ChevronLeft, ChevronRight, Download, Upload } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const revenueData: Record<string, { month: string; revenue: number; customers: number }[]> = {
@@ -277,6 +277,14 @@ export default function DashboardPage() {
               <p className="text-xs text-[#545b64]">รายการสินค้าใน {activeTab === 'ALL' ? 'ทุก Platform' : activeTab}</p>
             </div>
             <div className="flex gap-2 items-center">
+              <label className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#0073bb] border border-[#0073bb] hover:bg-[#f0f8ff] rounded-sm transition cursor-pointer">
+                <Upload className="w-3 h-3" /> Import CSV
+                <input type="file" accept=".csv" className="hidden" onChange={e => {
+                  const file = e.target.files?.[0];
+                  if (file) alert(`นำเข้าไฟล์: ${file.name}\n(Demo mode — ข้อมูลจะถูก process ในระบบจริง)`);
+                  e.target.value = '';
+                }} />
+              </label>
               <button onClick={exportCSV} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-[#1d8102] hover:bg-[#1a7302] border border-[#1d8102] rounded-sm transition">
                 <Download className="w-3 h-3" /> Export CSV
               </button>
