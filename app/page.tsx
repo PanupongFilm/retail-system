@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Filter, ChevronLeft, ChevronRight, Download, Upload } from 'lucide-react';
+import { Plus, Filter, ChevronLeft, ChevronRight, Download, Upload, X, ShieldCheck, Loader2, CheckCircle2, ChevronRight as Arrow } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const revenueData: Record<string, { month: string; revenue: number; customers: number }[]> = {
@@ -136,6 +136,189 @@ const platformData = {
 
 type Platform = keyof typeof platformData;
 
+type OAuthStep = 'select' | 'permission' | 'connecting' | 'success';
+
+const platformOptions = [
+  {
+    id: 'meta',
+    name: 'Meta (Facebook & Instagram)',
+    icon: '/meta-icon.png',
+    color: '#1877F2',
+    bg: '#e7f0fd',
+    border: '#b8d0f7',
+    perms: ['จัดการโฆษณา Facebook Ads', 'อ่านข้อมูล Page Insights', 'เข้าถึง Instagram Business', 'ดูรายงานยอดขาย Marketplace'],
+  },
+  {
+    id: 'line',
+    name: 'Line OA',
+    icon: '/line-icon.png',
+    color: '#06C755',
+    bg: '#e6f9ed',
+    border: '#b2ecc8',
+    perms: ['อ่านข้อมูลผู้ติดตาม', 'ส่ง/รับข้อความ', 'ดูสถิติ Broadcast', 'เข้าถึง Line Shopping'],
+  },
+  {
+    id: 'tiktok',
+    name: 'TikTok Shop',
+    icon: '/tiktok-icon.png',
+    color: '#010101',
+    bg: '#f0f0f0',
+    border: '#d0d0d0',
+    perms: ['จัดการสินค้าใน TikTok Shop', 'ดูสถิติ Live & Video', 'เข้าถึงข้อมูลคำสั่งซื้อ', 'รายงาน Affiliate'],
+  },
+];
+
+function AddPlatformModal({ onClose }: { onClose: () => void }) {
+  const [step, setStep] = useState<OAuthStep>('select');
+  const [selected, setSelected] = useState<typeof platformOptions[0] | null>(null);
+
+  const handleConnect = () => {
+    setStep('connecting');
+    setTimeout(() => setStep('success'), 2200);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
+      <div
+        className="bg-white rounded-sm shadow-xl w-full max-w-md overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Modal header */}
+        <div className="px-5 py-4 border-b border-[#eaeded] bg-[#f8f8f8] flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-bold text-[#16191f]">เชื่อมต่อ Platform</h2>
+            <p className="text-[10px] text-[#545b64] mt-0.5">
+              {step === 'select' && 'เลือก platform ที่ต้องการเชื่อมต่อ'}
+              {step === 'permission' && `ตรวจสอบสิทธิ์การเข้าถึง — ${selected?.name}`}
+              {step === 'connecting' && 'กำลังเชื่อมต่อผ่าน OAuth...'}
+              {step === 'success' && 'เชื่อมต่อสำเร็จแล้ว'}
+            </p>
+          </div>
+          <button onClick={onClose} className="text-[#aab7b8] hover:text-[#16191f] transition">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Step: select */}
+        {step === 'select' && (
+          <div className="p-5 space-y-2">
+            {platformOptions.map(p => (
+              <button
+                key={p.id}
+                onClick={() => { setSelected(p); setStep('permission'); }}
+                className="w-full flex items-center gap-3 px-4 py-3 border border-[#eaeded] rounded-sm hover:border-[#0073bb] hover:bg-[#f0f8ff] transition group text-left"
+              >
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0" style={{ backgroundColor: p.color }}>
+                  {p.name[0]}
+                </div>
+                <span className="text-sm font-semibold text-[#16191f] flex-1">{p.name}</span>
+                <Arrow className="w-4 h-4 text-[#aab7b8] group-hover:text-[#0073bb] transition" />
+              </button>
+            ))}
+            <p className="text-[10px] text-[#aab7b8] text-center pt-2">ระบบจะนำคุณไปยังหน้า OAuth ของแต่ละ platform เพื่อยืนยันสิทธิ์</p>
+          </div>
+        )}
+
+        {/* Step: permission */}
+        {step === 'permission' && selected && (
+          <div className="p-5 space-y-4">
+            {/* Fake browser bar */}
+            <div className="border border-[#eaeded] rounded-sm overflow-hidden">
+              <div className="bg-[#f2f3f3] px-3 py-2 flex items-center gap-2 border-b border-[#eaeded]">
+                <div className="flex gap-1">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#d13212]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#e8a838]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#1d8102]" />
+                </div>
+                <div className="flex-1 bg-white border border-[#eaeded] rounded-sm px-2 py-1 text-[10px] text-[#545b64] flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-[#1d8102]" />
+                  <span>https://www.{selected.id === 'meta' ? 'facebook' : selected.id}.com/oauth/authorize?client_id=...</span>
+                </div>
+              </div>
+
+              <div className="p-4 space-y-3" style={{ backgroundColor: selected.bg }}>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: selected.color }}>
+                    {selected.name[0]}
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-[#16191f]">{selected.name}</div>
+                    <div className="text-[10px] text-[#545b64]">ขอสิทธิ์เข้าถึงแอป <span className="font-semibold text-[#16191f]">SprintRetail</span></div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-sm border p-3 space-y-2" style={{ borderColor: selected.border }}>
+                  <p className="text-[10px] font-bold text-[#16191f] uppercase tracking-wide">SprintRetail จะได้รับสิทธิ์ :</p>
+                  {selected.perms.map((perm, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs text-[#16191f]">
+                      <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" style={{ color: selected.color }} />
+                      {perm}
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-[10px] text-[#545b64] leading-relaxed">
+                  การอนุญาตนี้จะช่วยให้ SprintRetail ดึงข้อมูลยอดขาย โฆษณา และรายงานจาก {selected.name} โดยอัตโนมัติ
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <button onClick={() => setStep('select')} className="flex-1 py-2 text-xs font-bold border border-[#aab7b8] text-[#545b64] hover:bg-[#f2f3f3] rounded-sm transition">
+                ยกเลิก
+              </button>
+              <button
+                onClick={handleConnect}
+                className="flex-1 py-2 text-xs font-bold text-white rounded-sm transition"
+                style={{ backgroundColor: selected.color }}
+              >
+                อนุญาตและเชื่อมต่อ
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step: connecting */}
+        {step === 'connecting' && (
+          <div className="p-10 flex flex-col items-center gap-4">
+            <Loader2 className="w-10 h-10 text-[#0073bb] animate-spin" />
+            <div className="text-center">
+              <p className="text-sm font-bold text-[#16191f]">กำลังเชื่อมต่อกับ {selected?.name}</p>
+              <p className="text-xs text-[#545b64] mt-1">ยืนยัน token และตั้งค่า webhook...</p>
+            </div>
+            <div className="w-full bg-[#eaeded] rounded-full h-1.5 overflow-hidden">
+              <div className="h-full bg-[#0073bb] rounded-full animate-[progress_2.2s_ease-in-out_forwards]" style={{ width: '80%' }} />
+            </div>
+          </div>
+        )}
+
+        {/* Step: success */}
+        {step === 'success' && selected && (
+          <div className="p-8 flex flex-col items-center gap-3 text-center">
+            <div className="w-14 h-14 rounded-full bg-[#e8f5e9] border-2 border-[#1d8102] flex items-center justify-center">
+              <CheckCircle2 className="w-7 h-7 text-[#1d8102]" />
+            </div>
+            <div>
+              <p className="text-base font-bold text-[#16191f]">เชื่อมต่อสำเร็จ!</p>
+              <p className="text-xs text-[#545b64] mt-1">{selected.name} ถูกเพิ่มเข้าระบบแล้ว<br/>ข้อมูลจะซิงค์ภายใน 5–10 นาที</p>
+            </div>
+            <div className="w-full bg-[#f0faf0] border border-[#b2ecc8] rounded-sm p-3 text-left space-y-1">
+              {['ยืนยัน Access Token', 'ลงทะเบียน Webhook', 'ดึงข้อมูลย้อนหลัง 30 วัน'].map((t, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs text-[#1d8102]">
+                  <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" /> {t}
+                </div>
+              ))}
+            </div>
+            <button onClick={onClose} className="mt-1 w-full py-2 text-xs font-bold text-white bg-[#1d8102] hover:bg-[#1a7302] rounded-sm transition">
+              เสร็จสิ้น
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 const statusStyle: Record<string, string> = {
   Active: 'text-[#1d8102]',
   'Low Stock': 'text-[#d13212]',
@@ -149,6 +332,7 @@ const statusDot: Record<string, string> = {
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Platform>('ALL');
+  const [showAddPlatform, setShowAddPlatform] = useState(false);
   const data = platformData[activeTab];
 
   const exportCSV = () => {
@@ -168,6 +352,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#f2f3f3] text-[#16191f] font-sans">
+      {showAddPlatform && <AddPlatformModal onClose={() => setShowAddPlatform(false)} />}
       <main className="max-w-[1600px] mx-auto p-4 space-y-4">
 
         {/* Platform Section */}
@@ -177,7 +362,10 @@ export default function DashboardPage() {
               <h2 className="text-lg font-bold text-[#16191f]">Platform</h2>
               <p className="text-xs text-[#545b64]">Sprint รวบรวมข้อมูลจาก Facebook Ads, Line OA, TikTok Shop — เลือก platform เพื่อดูข้อมูลเฉพาะช่องทาง</p>
             </div>
-            <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold bg-[#0073bb] text-white hover:bg-[#005f99] rounded-sm shadow-sm transition">
+            <button
+              onClick={() => setShowAddPlatform(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold bg-[#0073bb] text-white hover:bg-[#005f99] rounded-sm shadow-sm transition"
+            >
               <Plus className="w-3.5 h-3.5" /> Add Platform
             </button>
           </div>

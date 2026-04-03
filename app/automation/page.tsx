@@ -55,7 +55,13 @@ const alerts = [
 
 export default function AutomationPage() {
   const [currentAlert, setCurrentAlert] = useState(0);
+  const [approvedAlerts, setApprovedAlerts] = useState<Set<number>>(new Set());
   const alert = alerts[currentAlert];
+  const isApproved = approvedAlerts.has(currentAlert);
+
+  const handleApprove = () => {
+    setApprovedAlerts(prev => new Set(prev).add(currentAlert));
+  };
 
   return (
     <div className="min-h-screen bg-[#f2f3f3] text-[#16191f] font-sans">
@@ -178,19 +184,35 @@ export default function AutomationPage() {
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-between pt-2 border-t border-[#eaeded]">
-                <div className="bg-[#1d8102] text-white text-xs font-bold px-4 py-1.5 rounded-full">
-                  Confident : {alert.confidence} %
+              {isApproved ? (
+                <div className="flex items-center gap-3 pt-3 border-t border-[#c3e6c3] bg-[#f0faf0] rounded-sm px-4 py-3">
+                  <CheckCircle className="w-5 h-5 text-[#1d8102] flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-[#1d8102]">Approved — ระบบกำลังดำเนินการ</p>
+                    <p className="text-xs text-[#545b64] mt-0.5">AI รับคำสั่งแล้ว ดำเนินการตาม Business Solution ข้างต้นโดยอัตโนมัติ</p>
+                  </div>
+                  <span className="text-[10px] font-bold text-[#1d8102] border border-[#1d8102] px-2 py-1 rounded-full">
+                    Confident : {alert.confidence}%
+                  </span>
                 </div>
-                <div className="flex gap-2">
-                  <button className="px-5 py-1.5 text-xs font-bold text-white bg-[#d13212] hover:bg-[#b02a0e] rounded-full transition shadow-sm">
-                    Reject
-                  </button>
-                  <button className="px-5 py-1.5 text-xs font-bold text-white bg-[#1d8102] hover:bg-[#1a7302] rounded-full transition shadow-sm">
-                    Approve
-                  </button>
+              ) : (
+                <div className="flex items-center justify-between pt-2 border-t border-[#eaeded]">
+                  <div className="bg-[#1d8102] text-white text-xs font-bold px-4 py-1.5 rounded-full">
+                    Confident : {alert.confidence} %
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="px-5 py-1.5 text-xs font-bold text-white bg-[#d13212] hover:bg-[#b02a0e] rounded-full transition shadow-sm">
+                      Reject
+                    </button>
+                    <button
+                      onClick={handleApprove}
+                      className="px-5 py-1.5 text-xs font-bold text-white bg-[#1d8102] hover:bg-[#1a7302] rounded-full transition shadow-sm"
+                    >
+                      Approve
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Pagination */}

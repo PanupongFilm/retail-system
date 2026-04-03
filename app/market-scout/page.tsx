@@ -2,14 +2,69 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { Search, TrendingUp, TrendingDown, ExternalLink, Upload, CheckCircle } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, ExternalLink, Upload, CheckCircle, X, DollarSign, BarChart2, ShoppingCart, Megaphone } from 'lucide-react';
 
-const trendingProducts = [
-  { name: 'ส้มนำเข้าจากจีน', category: 'ผลไม้นำเข้า', trend: '+32%', volume: 89, score: 96, risk: 25, reward: 82, desc: 'ตลาด social commerce ฮิตติดเทรนด์และมีผู้แข่งขันกำลังเบาบาง', source: 'Google Trends + Shopee', detail: 'ความต้องการสูงขึ้นต่อเนื่อง 3 เดือน มีการค้นหาเพิ่มขึ้น 32% ใน Google Trends ราคาต้นทุนต่ำ margin สูงถึง 45%' },
-  { name: 'แอปเปิ้ลฟูจิญี่ปุ่น', category: 'ผลไม้พรีเมียม', trend: '+18%', volume: 74, score: 81, risk: 40, reward: 75, desc: 'กลุ่มลูกค้า premium กำลังซื้อสูง แต่มีคู่แข่งรายใหญ่อยู่แล้ว', source: 'Google Trends + Lazada', detail: 'ยอดขายใน Lazada เพิ่ม 18% QoQ กลุ่มเป้าหมายอายุ 28-45 ปี รายได้ปานกลาง-สูง' },
-  { name: 'มะม่วงน้ำดอกไม้ออร์แกนิค', category: 'ผลไม้ไทย', trend: '+45%', volume: 92, score: 88, risk: 20, reward: 88, desc: 'กระแส healthy eating ดันยอดขายพุ่ง เหมาะกับ TikTok Live', source: 'TikTok Trends + Shopee', detail: 'Hashtag #มะม่วงออร์แกนิค มียอดวิว 12M ใน TikTok ราคาขายได้สูงกว่าปกติ 60%' },
-  { name: 'ทุเรียนมันทองแช่แข็ง', category: 'ผลไม้แปรรูป', trend: '+28%', volume: 67, score: 72, risk: 55, reward: 70, desc: 'ตลาดส่งออกจีนโต แต่ต้นทุนสูงและต้องการ cold chain', source: 'Google Trends', detail: 'ความต้องการจากลูกค้าจีนในไทยสูง แต่ต้องลงทุน cold storage เพิ่มเติม' },
-  { name: 'สตรอว์เบอร์รีเกาหลี', category: 'ผลไม้นำเข้า', trend: '+61%', volume: 95, score: 91, risk: 35, reward: 90, desc: 'viral ใน TikTok ราคาพรีเมียม margin สูง แต่อายุสั้น', source: 'TikTok Trends + Google', detail: 'Viral content ทำให้ demand พุ่ง 61% ใน 2 สัปดาห์ ราคาขายได้ 180-250 บาท/กล่อง' },
+type DeepData = {
+  sellPrice: string;
+  costProduct: number;
+  costShipping: number;
+  costPackaging: number;
+  costAds: number;
+  costPlatformFee: number;
+  netMarginPct: number;
+  netMarginBaht: number;
+  breakEvenUnits: number;
+  estMonthlySales: number;
+  estMonthlyProfit: number;
+  channels: string[];
+  note: string;
+};
+
+type Product = {
+  name: string;
+  category: string;
+  trend: string;
+  volume: number;
+  score: number;
+  risk: number;
+  reward: number;
+  desc: string;
+  source: string;
+  detail: string;
+  deep: DeepData;
+};
+
+const trendingProducts: Product[] = [
+  {
+    name: 'ส้มนำเข้าจากจีน', category: 'ผลไม้นำเข้า', trend: '+32%', volume: 89, score: 96, risk: 25, reward: 82,
+    desc: 'ตลาด social commerce ฮิตติดเทรนด์และมีผู้แข่งขันกำลังเบาบาง', source: 'Google Trends + Shopee',
+    detail: 'ความต้องการสูงขึ้นต่อเนื่อง 3 เดือน มีการค้นหาเพิ่มขึ้น 32% ใน Google Trends ราคาต้นทุนต่ำ margin สูงถึง 45%',
+    deep: { sellPrice: '90–120 บาท/กก.', costProduct: 45, costShipping: 8, costPackaging: 5, costAds: 10, costPlatformFee: 4, netMarginPct: 31, netMarginBaht: 28, breakEvenUnits: 80, estMonthlySales: 500, estMonthlyProfit: 14000, channels: ['Shopee', 'TikTok Live', 'Line OA'], note: 'ต้นทุนต่ำ เหมาะกับ batch เล็ก ทดสอบตลาดได้เร็ว' },
+  },
+  {
+    name: 'แอปเปิ้ลฟูจิญี่ปุ่น', category: 'ผลไม้พรีเมียม', trend: '+18%', volume: 74, score: 81, risk: 40, reward: 75,
+    desc: 'กลุ่มลูกค้า premium กำลังซื้อสูง แต่มีคู่แข่งรายใหญ่อยู่แล้ว', source: 'Google Trends + Lazada',
+    detail: 'ยอดขายใน Lazada เพิ่ม 18% QoQ กลุ่มเป้าหมายอายุ 28-45 ปี รายได้ปานกลาง-สูง',
+    deep: { sellPrice: '280–350 บาท/กล่อง', costProduct: 160, costShipping: 20, costPackaging: 15, costAds: 30, costPlatformFee: 14, netMarginPct: 26, netMarginBaht: 73, breakEvenUnits: 40, estMonthlySales: 200, estMonthlyProfit: 14600, channels: ['Lazada', 'Facebook Ads', 'Instagram'], note: 'ต้องลงทุนโฆษณาสูงเพื่อแข่งกับแบรนด์ใหญ่' },
+  },
+  {
+    name: 'มะม่วงน้ำดอกไม้ออร์แกนิค', category: 'ผลไม้ไทย', trend: '+45%', volume: 92, score: 88, risk: 20, reward: 88,
+    desc: 'กระแส healthy eating ดันยอดขายพุ่ง เหมาะกับ TikTok Live', source: 'TikTok Trends + Shopee',
+    detail: 'Hashtag #มะม่วงออร์แกนิค มียอดวิว 12M ใน TikTok ราคาขายได้สูงกว่าปกติ 60%',
+    deep: { sellPrice: '150–200 บาท/กก.', costProduct: 60, costShipping: 10, costPackaging: 8, costAds: 15, costPlatformFee: 6, netMarginPct: 45, netMarginBaht: 81, breakEvenUnits: 30, estMonthlySales: 350, estMonthlyProfit: 28350, channels: ['TikTok Live', 'Shopee', 'Line OA'], note: 'Organic premium ขายได้ราคาสูง ต้นทุนต่ำ margin ดีที่สุดในกลุ่ม' },
+  },
+  {
+    name: 'ทุเรียนมันทองแช่แข็ง', category: 'ผลไม้แปรรูป', trend: '+28%', volume: 67, score: 72, risk: 55, reward: 70,
+    desc: 'ตลาดส่งออกจีนโต แต่ต้นทุนสูงและต้องการ cold chain', source: 'Google Trends',
+    detail: 'ความต้องการจากลูกค้าจีนในไทยสูง แต่ต้องลงทุน cold storage เพิ่มเติม',
+    deep: { sellPrice: '600–800 บาท/กก.', costProduct: 350, costShipping: 40, costPackaging: 30, costAds: 50, costPlatformFee: 28, netMarginPct: 22, netMarginBaht: 152, breakEvenUnits: 60, estMonthlySales: 120, estMonthlyProfit: 18240, channels: ['WeChat', 'Lazada', 'ตัวแทนส่งออก'], note: 'ต้องลงทุน cold chain ล่วงหน้า risk สูงกว่าสินค้าอื่น' },
+  },
+  {
+    name: 'สตรอว์เบอร์รีเกาหลี', category: 'ผลไม้นำเข้า', trend: '+61%', volume: 95, score: 91, risk: 35, reward: 90,
+    desc: 'viral ใน TikTok ราคาพรีเมียม margin สูง แต่อายุสั้น', source: 'TikTok Trends + Google',
+    detail: 'Viral content ทำให้ demand พุ่ง 61% ใน 2 สัปดาห์ ราคาขายได้ 180-250 บาท/กล่อง',
+    deep: { sellPrice: '180–250 บาท/กล่อง', costProduct: 90, costShipping: 15, costPackaging: 12, costAds: 20, costPlatformFee: 9, netMarginPct: 38, netMarginBaht: 76, breakEvenUnits: 50, estMonthlySales: 400, estMonthlyProfit: 30400, channels: ['TikTok Live', 'Shopee', 'Instagram'], note: 'อายุสั้นต้องขายเร็ว วางแผน logistics ให้ดีก่อนสั่ง' },
+  },
 ];
 
 const validateMockResult = {
@@ -52,6 +107,99 @@ function ProgressBar({ value, color }: { value: number; color: string }) {
   );
 }
 
+function DeepModal({ product, onClose }: { product: Product; onClose: () => void }) {
+  const d = product.deep;
+  const totalCost = d.costProduct + d.costShipping + d.costPackaging + d.costAds + d.costPlatformFee;
+  const costItems = [
+    { label: 'ต้นทุนสินค้า', value: d.costProduct, color: 'bg-[#d13212]' },
+    { label: 'ค่าขนส่ง', value: d.costShipping, color: 'bg-[#e07b25]' },
+    { label: 'ค่าบรรจุภัณฑ์', value: d.costPackaging, color: 'bg-[#e8a838]' },
+    { label: 'ค่าโฆษณา', value: d.costAds, color: 'bg-[#0073bb]' },
+    { label: 'ค่า Platform Fee', value: d.costPlatformFee, color: 'bg-[#545b64]' },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
+      <div
+        className="bg-white rounded-sm shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-5 py-4 border-b border-[#eaeded] bg-[#232f3e] flex items-center justify-between rounded-t-sm">
+          <div>
+            <h2 className="text-base font-bold text-white">{product.name}</h2>
+            <p className="text-xs text-[#aab7b8] mt-0.5">{product.category} · ราคาขาย {d.sellPrice}</p>
+          </div>
+          <button onClick={onClose} className="text-[#aab7b8] hover:text-white transition">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-4">
+          {/* KPI row */}
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { icon: <DollarSign className="w-4 h-4" />, label: 'Net Margin / หน่วย', value: `฿${d.netMarginBaht}`, sub: `${d.netMarginPct}% ของราคาขาย`, color: 'text-[#1d8102]' },
+              { icon: <ShoppingCart className="w-4 h-4" />, label: 'Break-even', value: `${d.breakEvenUnits} หน่วย`, sub: 'ต่อรอบ/เดือน', color: 'text-[#0073bb]' },
+              { icon: <BarChart2 className="w-4 h-4" />, label: 'กำไรสุทธิ/เดือน', value: `฿${d.estMonthlyProfit.toLocaleString()}`, sub: `ยอดขาย ${d.estMonthlySales} หน่วย`, color: 'text-[#e07b25]' },
+            ].map((k, i) => (
+              <div key={i} className="border border-[#eaeded] rounded-sm p-3 bg-[#fafafa]">
+                <div className={`flex items-center gap-1.5 ${k.color} mb-1`}>{k.icon}<span className="text-[10px] font-bold uppercase tracking-wide">{k.label}</span></div>
+                <div className={`text-lg font-bold ${k.color}`}>{k.value}</div>
+                <div className="text-[10px] text-[#545b64] mt-0.5">{k.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Cost breakdown */}
+          <div className="border border-[#eaeded] rounded-sm overflow-hidden">
+            <div className="px-4 py-2 bg-[#f8f8f8] border-b border-[#eaeded] flex items-center justify-between">
+              <span className="text-xs font-bold text-[#16191f]">โครงสร้างต้นทุน (ต่อหน่วย)</span>
+              <span className="text-xs font-bold text-[#d13212]">รวม ฿{totalCost} / หน่วย</span>
+            </div>
+            <div className="p-4 space-y-2.5">
+              {costItems.map((c, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="text-xs text-[#545b64] w-36 flex-shrink-0">{c.label}</span>
+                  <div className="flex-1 h-2 bg-[#eaeded] rounded-full overflow-hidden">
+                    <div className={`h-full ${c.color} rounded-full`} style={{ width: `${(c.value / totalCost) * 100}%` }} />
+                  </div>
+                  <span className="text-xs font-bold text-[#16191f] w-14 text-right">฿{c.value}</span>
+                  <span className="text-[10px] text-[#aab7b8] w-10 text-right">{Math.round((c.value / totalCost) * 100)}%</span>
+                </div>
+              ))}
+              {/* Margin row */}
+              <div className="pt-2 border-t border-[#eaeded] flex items-center justify-between">
+                <span className="text-xs font-bold text-[#16191f]">กำไรสุทธิ (Net Margin)</span>
+                <span className="text-sm font-bold text-[#1d8102]">฿{d.netMarginBaht} ({d.netMarginPct}%)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Channels + note */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="border border-[#eaeded] rounded-sm p-3 bg-[#fafafa]">
+              <div className="flex items-center gap-1.5 mb-2">
+                <Megaphone className="w-3.5 h-3.5 text-[#0073bb]" />
+                <span className="text-xs font-bold text-[#16191f]">ช่องทางที่แนะนำ</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {d.channels.map((ch, i) => (
+                  <span key={i} className="text-[10px] font-semibold bg-[#e8f4fd] border border-[#b8d9f0] text-[#0073bb] px-2 py-0.5 rounded-sm">{ch}</span>
+                ))}
+              </div>
+            </div>
+            <div className="border border-[#fff3cd] bg-[#fffbee] rounded-sm p-3">
+              <div className="text-xs font-bold text-[#856404] mb-1">หมายเหตุ</div>
+              <p className="text-xs text-[#545b64] leading-relaxed">{d.note}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function MarketScoutPage() {
   const [selected, setSelected] = useState(trendingProducts[0]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,6 +207,7 @@ export default function MarketScoutPage() {
   const [validateResult, setValidateResult] = useState<typeof validateMockResult | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [deepProduct, setDeepProduct] = useState<Product | null>(null);
 
   const handleValidate = () => {
     if (!validateInput.trim()) return;
@@ -72,6 +221,7 @@ export default function MarketScoutPage() {
 
   return (
     <div className="min-h-screen bg-[#f2f3f3] text-[#16191f] font-sans">
+      {deepProduct && <DeepModal product={deepProduct} onClose={() => setDeepProduct(null)} />}
       <main className="max-w-[1400px] mx-auto p-4 space-y-4">
 
         {/* Hero */}
@@ -170,8 +320,11 @@ export default function MarketScoutPage() {
 
               <div className="bg-white border border-[#eaeded] rounded-sm p-3 text-xs text-[#545b64] leading-relaxed">
                 {selected.detail}
-                <button className="mt-2 flex items-center gap-1 text-[#0073bb] hover:underline font-semibold">
-                  <ExternalLink className="w-3 h-3" /> ดูข้อมูลเพิ่มเติม
+                <button
+                  onClick={() => setDeepProduct(selected)}
+                  className="mt-2 flex items-center gap-1 text-[#0073bb] hover:underline font-semibold"
+                >
+                  <ExternalLink className="w-3 h-3" /> ดูข้อมูลเชิงลึก (ต้นทุน / Margin / กำไร)
                 </button>
               </div>
 
