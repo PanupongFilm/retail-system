@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Filter, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const revenueData: Record<string, { month: string; revenue: number; customers: number }[]> = {
@@ -151,6 +151,21 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Platform>('ALL');
   const data = platformData[activeTab];
 
+  const exportCSV = () => {
+    const headers = ['Product Name', 'Price (฿)', 'Stock', 'Last Update', 'Status', 'Cost (฿)'];
+    const rows = data.products.map(p => [
+      `"${p.name}"`, p.price, p.stock, p.update, p.status, p.cost
+    ]);
+    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `product-list-${activeTab}-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-[#f2f3f3] text-[#16191f] font-sans">
       <main className="max-w-[1600px] mx-auto p-4 space-y-4">
@@ -262,6 +277,9 @@ export default function DashboardPage() {
               <p className="text-xs text-[#545b64]">รายการสินค้าใน {activeTab === 'ALL' ? 'ทุก Platform' : activeTab}</p>
             </div>
             <div className="flex gap-2 items-center">
+              <button onClick={exportCSV} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-[#1d8102] hover:bg-[#1a7302] border border-[#1d8102] rounded-sm transition">
+                <Download className="w-3 h-3" /> Export CSV
+              </button>
               <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#545b64] border border-[#aab7b8] hover:bg-[#f2f3f3] rounded-sm transition">
                 <Filter className="w-3 h-3" /> Filter
               </button>
