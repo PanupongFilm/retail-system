@@ -83,7 +83,7 @@ export default function AutomationPage() {
         <section className="bg-white border border-[#eaeded] shadow-sm rounded-sm">
           <div className="px-6 py-4 border-b border-[#eaeded] bg-[#f8f8f8]">
             <h2 className="text-lg font-bold text-[#16191f]">Automation</h2>
-            <p className="text-xs text-[#545b64] mt-0.5">ติดตามสถานะ Aurora Automation Pipeline — จาก Insight สู่ Execution ในทุกขั้นตอน</p>
+            <p className="text-xs text-[#545b64] mt-0.5">ติดตามสถานะ Sprint Automation Pipeline — จาก Insight สู่ Execution ในทุกขั้นตอน</p>
           </div>
           <div className="px-8 py-6">
             <div className="flex items-start justify-between relative">

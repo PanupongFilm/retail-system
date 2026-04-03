@@ -160,7 +160,7 @@ export default function DashboardPage() {
           <div className="px-4 py-3 border-b border-[#eaeded] bg-[#f8f8f8] flex justify-between items-center">
             <div>
               <h2 className="text-lg font-bold text-[#16191f]">Platform</h2>
-              <p className="text-xs text-[#545b64]">Aurora รวบรวมข้อมูลจาก Facebook Ads, Line OA, TikTok Shop — เลือก platform เพื่อดูข้อมูลเฉพาะช่องทาง</p>
+              <p className="text-xs text-[#545b64]">Sprint รวบรวมข้อมูลจาก Facebook Ads, Line OA, TikTok Shop — เลือก platform เพื่อดูข้อมูลเฉพาะช่องทาง</p>
             </div>
             <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold bg-[#0073bb] text-white hover:bg-[#005f99] rounded-sm shadow-sm transition">
               <Plus className="w-3.5 h-3.5" /> Add Platform

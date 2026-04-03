@@ -22,8 +22,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aurora",
+  title: "Sprint",
   description: "AI-powered business intelligence for SME owners",
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({

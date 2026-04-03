@@ -96,7 +96,7 @@ export default function AIInsightPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1, role: 'assistant', type: 'text',
-      content: 'สวัสดีค่ะ ฉันคือ Aurora AI 👋\n\nAurora ไม่ได้แค่ตอบคำถาม — เราวิเคราะห์ข้อมูลธุรกิจของคุณ อธิบาย reasoning และขอ confirm ก่อน execute ทุกครั้ง ลองพิมพ์สิ่งที่อยากรู้หรือเลือกจากคำถามแนะนำด้านล่างได้เลยค่ะ',
+      content: 'สวัสดีค่ะ ฉันคือ Sprint AI 👋\n\nSprint ไม่ได้แค่ตอบคำถาม — เราวิเคราะห์ข้อมูลธุรกิจของคุณ อธิบาย reasoning และขอ confirm ก่อน execute ทุกครั้ง ลองพิมพ์สิ่งที่อยากรู้หรือเลือกจากคำถามแนะนำด้านล่างได้เลยค่ะ',
     },
   ]);
   const [input, setInput] = useState('');
@@ -250,7 +250,7 @@ export default function AIInsightPage() {
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
-                <div className="text-sm font-bold text-[#16191f]">Aurora AI</div>
+                <div className="text-sm font-bold text-[#16191f]">Sprint AI</div>
                 <div className="text-[10px] text-[#1d8102] flex items-center gap-1">
                   <span className="w-1.5 h-1.5 bg-[#1d8102] rounded-full inline-block" /> Online — วิเคราะห์ข้อมูล อธิบาย reasoning ก่อน execute
                 </div>
@@ -314,7 +314,7 @@ export default function AIInsightPage() {
                 <Send className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-[10px] text-[#aab7b8] mt-1.5">Aurora AI จะอธิบาย reasoning และขอ confirm ก่อน execute ทุกครั้ง</p>
+            <p className="text-[10px] text-[#aab7b8] mt-1.5">Sprint AI จะอธิบาย reasoning และขอ confirm ก่อน execute ทุกครั้ง</p>
           </div>
         </div>
 
